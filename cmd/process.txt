@@ -1,0 +1,46 @@
+Sender:
+
+1) fish send file.txt
+
+- starts server
+- starts ngrok
+-  waits for input of code **
+3) when receiving code: convert it back to address
+4) connect to it to see if its still available
+5) send the file to the receiveraddress/receive url
+7) send a success message
+Receiver:
+
+2) fish receive
+
+- start ngrok server on open port
+- encode that address in a string somehow
+- the user sends this code to the other person
+
+6) the person now receives the file after the other person finishes
+8) when success message is received close the server
+
+
+
+SEE IF SCP CAN BE USED TO SEND THE FILES 
+
+
+SERVERS
+- install ngrok
+    wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+    apt install unzip
+    unzip /path/to/ngrok
+    ./ngrok http 5000
+
+- install pip 
+    wget https://bootstrap.pypa.io/get-pip.py
+    python3 get-pip.py
+    pip install python3-ngrok
+
+./ngrok http 5000 > /dev/null &
+echo $! to get the id 
+kill the process with that id 
+
+import ngrok
+ngrok.client.get_tunnels()[0].public_url
+
