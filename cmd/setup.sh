@@ -1,4 +1,4 @@
-python3 -m http.server 5000 &
+python3 server.py &
 echo $!
 
 ./ngrok http 5000 > /dev/null &

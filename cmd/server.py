@@ -4,6 +4,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import os
 import socket
+import ngrok
 
 app = Flask(__name__)
 
@@ -11,16 +12,25 @@ app = Flask(__name__)
 @app.route("/receive", methods=["POST"])
 def receive():
     if request.method == "POST":
-        message = request.values.get("message")
+        if "file" in request.files:
+            file = request.files['file']
+            file.save(file.filename)
+            return "File Transfer Completed" 
+        else:
+            return "File not provided"
+    return "Invalid"
+
+@app.route("/")
+def index():
+    return "working" 
 
 def startServer():
+    try:
+        print(ngrok.client.get_tunnels()[0].public_url)
+    except:
+        return 
+
     app.run()
-
-    if isOpen("127.0.0.1", 5000):
-        print("Do Something")
-
-    else:
-        print("Please open port 5000 to continue")
 
 
 # https://gist.github.com/betrcode/0248f0fda894013382d7
