@@ -31,7 +31,7 @@ var connectedPeers = {};
 
 // Show this peer's ID.
 peer.on('open', function(id){
-  $('#pid').text(id);
+  $('#pid').text(window.location.href + id);
 });
 
 // Await connections from others
@@ -134,16 +134,14 @@ $(document).ready(function() {
     var file = e.originalEvent.dataTransfer.files[0];
     document.getElementById("page1").style.display = "none";
     document.getElementById("page2").style.display = "block";
-    // document.getElementById("sendFileButton").value = file.name;
-    // document.getElementById("shareUrl").style.display = "block";
-    // var file = e.originalEvent.dataTransfer.files[0];
-    $("#sendFileButton").click(function(){
+
+    $("#sendButton").click(function(){
       document.getElementById("page3").style.display = "none";
       document.getElementById("page4").style.display = "block";
       eachActiveConnection(function(c, $c) {
         if (c.label === "file"){
           // you sent a file
-          sendMessage("Receiving file of size" + file.size + " bytes");
+          sendMessage("Receiving file of size " + file.size + " bytes ...");
 
           c.send({"name": file.name, "File":file});
           // document.getElementById("page1").style.display = "none";
@@ -245,23 +243,33 @@ window.onunload = window.onbeforeunload = function(e) {
         <img class="logo" src="static/images/tf1.png" width=120px>
       </div>
     <div id="box">
-      <p>Drag file here</p>
+      <p>Drag file here
+      </div>
+
+      </p>
+
+
       <div id="wrap" style="display:none"><div id="connections"><span class="filler">You have not yet made any connections.</span></div><div class="clear"></div></div>    
     </div>
 </div>
 
-<div id="page2" class="page" style="background-color: red; display: none">
+<div id="page2" class="page" style="display: none">
   <div class="logo">
       <img class="logo" src="static/images/tf1.png" width=120px>
   </div>
-  <p>http://127.0.0.1:5000/<span id="pid"></span><br></p>
+  <p id="shareUrl"><strong>Send to Recipient: </strong><span id="pid"></span><br></p>
 </div>
 
 <div id="page3" class="page" style="background-color: white; display:none">
   <div class="logo">
       <img class="logo" src="static/images/tf1.png" width=120px>
   </div>
-  <p><input type="button" id="sendFileButton" value="Send"/></p>
+  <!-- <p><input type="button" id="sendFileButton" value="Send"/></p> -->
+  <div id="sendButton">
+    <div id="sendButtonText">
+      Send
+    </div>
+  </div>
 </div>
 
 <div id="page4" class="page" style="background-color: white; display:none">
@@ -303,6 +311,32 @@ body, html{
   height: 100vh;
 }
 
+#sendButton{
+  width: 120px;
+  height: 50px;
+  background-color: #212635;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  vertical-align: middle;
+  cursor: pointer;
+
+}
+#sendButtonText{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
+#shareUrl{
+  padding: 20px;
+  background-color: #212635;
+  color: white;
+}
 .page p{
   margin: 0;
   position: absolute;
