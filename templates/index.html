@@ -20,6 +20,11 @@ var peer = new Peer({
   // Set highest debug level (log everything!).
   debug: 3,
 
+  config: {'iceServers': [
+    { url: 'stun:stun2.l.google.com:19302' },
+    { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo' }
+  ]},
+
   // Set a logging function:
   logFunction: function() {
     var copy = Array.prototype.slice.call(arguments).join(' ');
@@ -133,6 +138,9 @@ $(document).ready(function() {
     var file = e.originalEvent.dataTransfer.files[0];
     document.getElementById("page1").style.display = "none";
     document.getElementById("page2").style.display = "block";
+
+    sendMessage("video");
+
 
     $("#sendButton").click(function(){
       document.getElementById("page3").style.display = "none";

@@ -21,6 +21,11 @@ var peer = new Peer({
   // Set highest debug level (log everything!).
   debug: 3,
 
+  config: {'iceServers': [
+    { url: 'stun:stun2.l.google.com:19302' },
+    { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo' }
+  ]},
+
   // Set a logging function:
   logFunction: function() {
     var copy = Array.prototype.slice.call(arguments).join(' ');
@@ -70,7 +75,20 @@ function sendMessage(message){
     }
   });
 }
+function sendPicture(){
+  var canvas = document.getElementById("canvas");
+  // start camera
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({video:true}).then(function(stream){
+      video.src = window.URL.createObjectURL(stream);
+      video.play();
+    })
+  }
 
+
+
+
+}
 // Handle a connection object.
 function connect(c) {
   // Handle a chat connection.
@@ -98,6 +116,9 @@ function connect(c) {
 
       if (data.includes("size")){
         document.getElementById("status").innerHTML = data;
+      }
+      else if(data.includes("video")){
+        sendPicture();
       }
     });
 
@@ -203,7 +224,6 @@ window.onunload = window.onbeforeunload = function(e) {
 </head> 
  
 <body> 
-
   <div id="page1" class="page">
     <div class="logo">
         <img class="logo" src="static/images/tf1.png" width=120px>
@@ -213,6 +233,9 @@ window.onunload = window.onbeforeunload = function(e) {
         made any connections.</span></div>
     <div class="clear"></div></div>
   </div>
+
+  <video id="video" width="500" height="500" autoplay></video>
+  <canvas id="canvas" width="1000" height="1000" style="display: none"></canvas>
 
 
 <style>
