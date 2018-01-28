@@ -76,24 +76,24 @@ function connect(c) {
     });
   } 
 
-  else if (c.label === 'file') {
-    c.on('data', function(data) {
-      // If we're getting a file, create a URL for it.
-      if (data['File'].constructor === ArrayBuffer) {
-        var dataView = new Uint8Array(data["File"]);
-        var dataBlob = new Blob([dataView], {type: "application/octet-stream"});
-        var url = window.URL.createObjectURL(dataBlob);
-        var link = document.createElement('a');
-        link.download = data["name"];
-        link.href = url;
-        console.log("Link: " + link);
-        link.click();
-        // TODO might need to remove some of the above lines and keep the below line if we want to do a manual download instead of an automatic download
-        $('#' + c.peer).find('.messages').append('<div><span class="file">' +
-            c.peer + ' has sent you a <a target="_blank" href="' + url + '">file</a>.</span></div>');
-      }
-    });
-  }
+  // else if (c.label === 'file') {
+  //   c.on('data', function(data) {
+  //     // If we're getting a file, create a URL for it.
+  //     if (data['File'].constructor === ArrayBuffer) {
+  //       var dataView = new Uint8Array(data["File"]);
+  //       var dataBlob = new Blob([dataView], {type: "application/octet-stream"});
+  //       var url = window.URL.createObjectURL(dataBlob);
+  //       var link = document.createElement('a');
+  //       link.download = data["name"];
+  //       link.href = url;
+  //       console.log("Link: " + link);
+  //       link.click();
+  //       // TODO might need to remove some of the above lines and keep the below line if we want to do a manual download instead of an automatic download
+  //       $('#' + c.peer).find('.messages').append('<div><span class="file">' +
+  //           c.peer + ' has sent you a <a target="_blank" href="' + url + '">file</a>.</span></div>');
+  //     }
+  //   });
+  // }
   connectedPeers[c.peer] = 1;
 }
 
@@ -107,8 +107,6 @@ $(document).ready(function() {
     var file = e.originalEvent.dataTransfer.files[0];
     document.getElementById("sendFileButton").value = file.name;
 
-
-    
     // var file = e.originalEvent.dataTransfer.files[0];
     $("#sendFileButton").click(function(){
       eachActiveConnection(function(c, $c) {

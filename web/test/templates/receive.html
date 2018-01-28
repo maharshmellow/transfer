@@ -24,7 +24,7 @@ var peer = new Peer({
   // Set a logging function:
   logFunction: function() {
     var copy = Array.prototype.slice.call(arguments).join(' ');
-    $('.log').append(copy + '<br>');
+    console.log(copy);
   }
 });
 var connectedPeers = {};
@@ -66,15 +66,17 @@ function connect(c) {
       messages.append('<div><span class="peer">' + c.peer + '</span>: ' + data +
         '</div>');
         });
-        c.on('close', function() {
-          alert(c.peer + ' has left the chat.');
-          chatbox.remove();
-          if ($('.connection').length === 0) {
-            $('.filler').show();
-          }
-          delete connectedPeers[c.peer];
-        });
-  } else if (c.label === 'file') {
+    c.on('close', function() {
+      alert(c.peer + ' has left the chat.');
+      chatbox.remove();
+      if ($('.connection').length === 0) {
+        $('.filler').show();
+      }
+      delete connectedPeers[c.peer];
+    });
+  } 
+
+  else if (c.label === 'file') {
     c.on('data', function(data) {
       // If we're getting a file, create a URL for it.
       if (data['File'].constructor === ArrayBuffer) {
@@ -84,8 +86,9 @@ function connect(c) {
         var link = document.createElement('a');
         link.download = data["name"];
         link.href = url;
-        console.log(link);
+        console.log("Link: " + link);
         link.click();
+        // TODO might need to remove some of the above lines and keep the below line if we want to do a manual download instead of an automatic download
         $('#' + c.peer).find('.messages').append('<div><span class="file">' +
             c.peer + ' has sent you a <a target="_blank" href="' + url + '">file</a>.</span></div>');
       }
@@ -95,42 +98,22 @@ function connect(c) {
 }
 
 $(document).ready(function() {
-  // Prepare file drop box.
-  var box = $('#box');
-  box.on('dragenter', doNothing);
-  box.on('dragover', doNothing);
-  box.on('drop', function(e){
-    e.originalEvent.preventDefault();
-    var file = e.originalEvent.dataTransfer.files[0];
-    eachActiveConnection(function(c, $c) {
-      if (c.label === 'file') {
-        console.log("FILE: " + file.type);
-        c.send({"File":file,"name":file.name});
-
-        $c.find('.messages').append('<div><span class="file">You sent a file.</span></div>');
-      }
-    });
-  });
-  function doNothing(e){
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
   // Connect to a peer
   $('#connect').click(function() {
-    var requestedPeer = "{{senderID}}";
+    var requestedPeer = $('#rid').val();
     if (!connectedPeers[requestedPeer]) {
       // Create 2 connections, one labelled chat and another labelled file.
       var c = peer.connect(requestedPeer, {
         label: 'chat',
-        serialization: 'none',
-        metadata: {message: 'hi i want to chat with you!'}
+        serialization: 'none'
       });
       c.on('open', function() {
         connect(c);
       });
       c.on('error', function(err) { alert(err); });
-      var f = peer.connect(requestedPeer, { label: 'file', reliable: true });
+      
+      var f = peer.connect(requestedPeer, 
+        { label: 'file', reliable: true });
       f.on('open', function() {
         connect(f);
       });
@@ -197,9 +180,6 @@ window.onunload = window.onbeforeunload = function(e) {
 </head> 
  
 <body> 
-  <a href="https://github.com/peers/peerjs"><img style="position: absolute; top: 0; right: 0; border: 0;"
-    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
-    alt="Fork me on GitHub"></a>
 
   <div id="actions">
     Your PeerJS ID is <span id="pid"></span><br>
@@ -215,20 +195,7 @@ window.onunload = window.onbeforeunload = function(e) {
         made any connections.</span></div>
     <div class="clear"></div></div>
 
-  <div id="box" style="background: #fff; font-size: 18px;padding:40px 30px; text-align: center;">
-    Drag file here to send to active connections.
-  </div>
-  
-  
-  <div class="warning browser">
-    <div class="important">Your browser version: <span id="browsers"></span><br>
-  Currently <strong>Firefox 22+ and Google Chrome 26.0.1403.0 or above</strong> is required.</strong></div>For more up to date compatibility
-information see <a href="http://peerjs.com/status">PeerJS WebRTC
-  Status</a><br>Note that this demo may also fail if you are behind
-stringent firewalls or both you and the remote peer and behind symmetric
-NATs.
 
-<div class="log" style="color:#FF7500;text-shadow:none;padding:15px;background:#eee"><strong>Connection status</strong>:<br></div>
 </div>
 </body> 
 </html> 
