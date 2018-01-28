@@ -11,6 +11,5 @@ def index():
 def redirect_code(senderID):
     return render_template("receive.html", senderID=senderID)
 
-
 if __name__ == "__main__":
     app.run(debug=True)
