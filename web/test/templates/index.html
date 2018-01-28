@@ -24,7 +24,7 @@ var peer = new Peer({
   // Set a logging function:
   logFunction: function() {
     var copy = Array.prototype.slice.call(arguments).join(' ');
-    $('.log').append(copy + '<br>');
+    console.log(copy);
   }
 });
 var connectedPeers = {};
@@ -66,15 +66,17 @@ function connect(c) {
       messages.append('<div><span class="peer">' + c.peer + '</span>: ' + data +
         '</div>');
         });
-        c.on('close', function() {
-          alert(c.peer + ' has left the chat.');
-          chatbox.remove();
-          if ($('.connection').length === 0) {
-            $('.filler').show();
-          }
-          delete connectedPeers[c.peer];
-        });
-  } else if (c.label === 'file') {
+    c.on('close', function() {
+      alert(c.peer + ' has left the chat.');
+      chatbox.remove();
+      if ($('.connection').length === 0) {
+        $('.filler').show();
+      }
+      delete connectedPeers[c.peer];
+    });
+  } 
+
+  else if (c.label === 'file') {
     c.on('data', function(data) {
       // If we're getting a file, create a URL for it.
       if (data['File'].constructor === ArrayBuffer) {
@@ -84,8 +86,9 @@ function connect(c) {
         var link = document.createElement('a');
         link.download = data["name"];
         link.href = url;
-        console.log(link);
+        console.log("Link: " + link);
         link.click();
+        // TODO might need to remove some of the above lines and keep the below line if we want to do a manual download instead of an automatic download
         $('#' + c.peer).find('.messages').append('<div><span class="file">' +
             c.peer + ' has sent you a <a target="_blank" href="' + url + '">file</a>.</span></div>');
       }
@@ -110,8 +113,8 @@ $(document).ready(function() {
     $("#sendFileButton").click(function(){
       eachActiveConnection(function(c, $c) {
         if (c.label === "file"){
+          // you sent a file
           c.send({"name": file.name, "File":file});
-          $c.find('.messages').append('<div><span class="file">You sent a file.</span></div>');
           document.getElementById("box").style.display = "none";
           document.getElementById("sendFileButton").style.display = "none";
         }
@@ -138,7 +141,9 @@ $(document).ready(function() {
         connect(c);
       });
       c.on('error', function(err) { alert(err); });
-      var f = peer.connect(requestedPeer, { label: 'file', reliable: true });
+      
+      var f = peer.connect(requestedPeer, 
+        { label: 'file', reliable: true });
       f.on('open', function() {
         connect(f);
       });
@@ -220,14 +225,12 @@ window.onunload = window.onbeforeunload = function(e) {
         made any connections.</span></div>
     <div class="clear"></div></div>
 
-  <div id="box" style="background: #fff; font-size: 18px;padding:40px 30px; text-align: center;">
+  <div id="box" style="background: grey; font-size: 18px;padding:40px 30px; text-align: center;">
     Drag file here to send to active connections.
   </div>
   
   <input type="button" id="sendFileButton" value="Send"/>
 
-
-<div class="log" style="color:#FF7500;text-shadow:none;padding:15px;background:#eee"><strong>Connection status</strong>:<br></div>
 </div>
 </body> 
 </html> 
