@@ -54,9 +54,13 @@ function connect(c) {
     $('#connections').append(chatbox);
 
     c.on('data', function(data) {
-      messages.append('<div><span class="peer">' + c.peer + '</span>: ' + data +
-        '</div>');
-        });
+      messages.append('<div><span class="peer">' + c.peer + '</span>: ' + data + '</div>');
+      if (data == "Transferred"){
+          document.getElementById("page4").style.display = "none";
+          document.getElementById("page5").style.display = "block";
+      }
+    });
+
     c.on('close', function() {
       alert(c.peer + ' has left the chat.');
       chatbox.remove();
@@ -105,12 +109,14 @@ $(document).ready(function() {
     // document.getElementById("shareUrl").style.display = "block";
     // var file = e.originalEvent.dataTransfer.files[0];
     $("#sendFileButton").click(function(){
+      document.getElementById("page3").style.display = "none";
+      document.getElementById("page4").style.display = "block";
       eachActiveConnection(function(c, $c) {
         if (c.label === "file"){
           // you sent a file
           c.send({"name": file.name, "File":file});
           // document.getElementById("page1").style.display = "none";
-          document.getElementById("sendFileButton").style.display = "none";
+          // document.getElementById("sendFileButton").style.display = "none";
         }
       }); 
     });
@@ -221,8 +227,27 @@ window.onunload = window.onbeforeunload = function(e) {
 </div>
 
 <div id="page3" class="page" style="background-color: white; display:none">
+  <div class="logo">
+      <img class="logo" src="static/images/tf1.png" width=120px>
+  </div>
   <p><input type="button" id="sendFileButton" value="Send"/></p>
 </div>
+
+<div id="page4" class="page" style="background-color: white; display:none">
+  <div class="logo">
+      <img class="logo" src="static/images/tf1.png" width=120px>
+  </div>
+  <p>Sending file ...</p>
+</div>
+
+<div id="page5" class="page" style="background-color: white; display:none">
+  <div class="logo">
+      <img class="logo" src="static/images/tf1.png" width=120px>
+  </div>
+  <p>Sent!</p>
+</div>
+
+
 <style>
 body, html{
   margin: 0;
@@ -245,7 +270,6 @@ body, html{
 #box{
   font-size: 15px;
   height: 100vh;
-  background-color: #efefef;
 }
 
 .page p{

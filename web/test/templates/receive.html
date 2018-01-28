@@ -41,6 +41,36 @@ peer.on('error', function(err) {
   console.log(err);
 })
 
+// Goes through each active peer and calls FN on its connections.
+function eachActiveConnection(fn) {
+  var actives = $('.active');
+  var checkedIds = {};
+  actives.each(function() {
+    var peerId = $(this).attr('id');
+
+    if (!checkedIds[peerId]) {
+      var conns = peer.connections[peerId];
+      for (var i = 0, ii = conns.length; i < ii; i += 1) {
+        var conn = conns[i];
+        fn(conn, $(this));
+      }
+    }
+
+    checkedIds[peerId] = 1;
+  });
+}
+
+function sendMessage(message){
+  // For each active connection, send the message.
+  eachActiveConnection(function(c, $c) {
+    if (c.label === 'chat') {
+      c.send(message);
+      // $c.find('.messages').append('<div><span class="you">You: </span>' + msg
+      //   + '</div>');
+    }
+  });
+}
+
 // Handle a connection object.
 function connect(c) {
   // Handle a chat connection.
@@ -90,6 +120,10 @@ function connect(c) {
         link.href = url;
         console.log("Link: " + link);
         link.click();
+
+        // send a message back saying the link has been transferred 
+        sendMessage("Transferred");
+
         // TODO might need to remove some of the above lines and keep the below line if we want to do a manual download instead of an automatic download
         $('#' + c.peer).find('.messages').append('<div><span class="file">' +
             c.peer + ' has sent you a <a target="_blank" href="' + url + '">file</a>.</span></div>');
@@ -147,24 +181,6 @@ $(document).ready(function() {
     $('#text').focus();
   });
 
-  // Goes through each active peer and calls FN on its connections.
-  function eachActiveConnection(fn) {
-    var actives = $('.active');
-    var checkedIds = {};
-    actives.each(function() {
-      var peerId = $(this).attr('id');
-
-      if (!checkedIds[peerId]) {
-        var conns = peer.connections[peerId];
-        for (var i = 0, ii = conns.length; i < ii; i += 1) {
-          var conn = conns[i];
-          fn(conn, $(this));
-        }
-      }
-
-      checkedIds[peerId] = 1;
-    });
-  }
 
   // Show browser version
   $('#browsers').text(navigator.userAgent);
