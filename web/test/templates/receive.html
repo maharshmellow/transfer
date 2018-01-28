@@ -95,6 +95,10 @@ function connect(c) {
     c.on('data', function(data) {
       messages.append('<div><span class="peer">' + c.peer + '</span>: ' + data +
         '</div>');
+
+      if (data.includes("size")){
+        document.getElementById("status").innerHTML = data;
+      }
     });
 
     c.on('close', function() {
@@ -123,6 +127,7 @@ function connect(c) {
 
         // send a message back saying the link has been transferred 
         sendMessage("Transferred");
+        document.getElementById("status").innerHTML = "Received!";
 
         // TODO might need to remove some of the above lines and keep the below line if we want to do a manual download instead of an automatic download
         $('#' + c.peer).find('.messages').append('<div><span class="file">' +
@@ -166,20 +171,20 @@ $(document).ready(function() {
   // });
 
   // Send a chat message to all active connections.
-  $('#send').submit(function(e) {
-    e.preventDefault();
-    // For each active connection, send the message.
-    var msg = $('#text').val();
-    eachActiveConnection(function(c, $c) {
-      if (c.label === 'chat') {
-        c.send(msg);
-        $c.find('.messages').append('<div><span class="you">You: </span>' + msg
-          + '</div>');
-      }
-    });
-    $('#text').val('');
-    $('#text').focus();
-  });
+  // $('#send').submit(function(e) {
+  //   e.preventDefault();
+  //   // For each active connection, send the message.
+  //   var msg = $('#text').val();
+  //   eachActiveConnection(function(c, $c) {
+  //     if (c.label === 'chat') {
+  //       c.send(msg);
+  //       $c.find('.messages').append('<div><span class="you">You: </span>' + msg
+  //         + '</div>');
+  //     }
+  //   });
+  //   $('#text').val('');
+  //   $('#text').focus();
+  // });
 
 
   // Show browser version
@@ -198,20 +203,46 @@ window.onunload = window.onbeforeunload = function(e) {
 </head> 
  
 <body> 
-  File is being transfered ... 
-  <!-- <div id="actions">
-    Your PeerJS ID is <span id="pid"></span><br>
-    Connect to a peer: <input type="text" id="rid" placeholder="Someone else's id"><input class="button" type="button" value="Connect" id="connect"><br><br>
- -->
-<!--     <form id="send">
-      <input type="text" id="text" placeholder="Enter message"><input class="button" type="submit" value="Send to selected peers">
-    </form> -->
-    <!-- <button id="close">Close selected connections</button> -->
-  <!-- </div> -->
 
-  <div id="wrap" style="display:none"><div id="connections"><span class="filler">You have not yet
+  <div id="page1" class="page">
+    <div class="logo">
+        <img class="logo" src="static/images/tf1.png" width=120px>
+    </div>
+    <p id="status">Waiting ...</p>
+    <div id="wrap" style="display:none"><div id="connections"><span class="filler">You have not yet
         made any connections.</span></div>
     <div class="clear"></div></div>
   </div>
+
+
+<style>
+body, html{
+  margin: 0;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.logo{
+  float: left;
+  padding: 30px;
+  position: absolute;
+}
+
+.page{
+  height: 100vh;
+  overflow: hidden;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.page p{
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
+}
+
+</style>
 </body> 
 </html> 

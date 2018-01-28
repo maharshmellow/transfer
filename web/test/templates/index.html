@@ -41,6 +41,35 @@ peer.on('error', function(err) {
   console.log(err);
 })
 
+function eachActiveConnection(fn) {
+  var actives = $('.active');
+  var checkedIds = {};
+  actives.each(function() {
+    var peerId = $(this).attr('id');
+
+    if (!checkedIds[peerId]) {
+      var conns = peer.connections[peerId];
+      for (var i = 0, ii = conns.length; i < ii; i += 1) {
+        var conn = conns[i];
+        fn(conn, $(this));
+      }
+    }
+
+    checkedIds[peerId] = 1;
+  });
+}
+
+function sendMessage(message){
+  // For each active connection, send the message.
+  eachActiveConnection(function(c, $c) {
+    if (c.label === 'chat') {
+      c.send(message);
+      // $c.find('.messages').append('<div><span class="you">You: </span>' + msg
+      //   + '</div>');
+    }
+  });
+}
+
 // Handle a connection object.
 function connect(c) {
   // Handle a chat connection.
@@ -114,6 +143,8 @@ $(document).ready(function() {
       eachActiveConnection(function(c, $c) {
         if (c.label === "file"){
           // you sent a file
+          sendMessage("Receiving file of size" + file.size + " bytes");
+
           c.send({"name": file.name, "File":file});
           // document.getElementById("page1").style.display = "none";
           // document.getElementById("sendFileButton").style.display = "none";
