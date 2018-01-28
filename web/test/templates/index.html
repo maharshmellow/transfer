@@ -102,13 +102,21 @@ $(document).ready(function() {
   box.on('drop', function(e){
     e.originalEvent.preventDefault();
     var file = e.originalEvent.dataTransfer.files[0];
-    eachActiveConnection(function(c, $c) {
-      if (c.label === 'file') {
-        console.log("FILE: " + file.type);
-        c.send({"File":file,"name":file.name});
+    document.getElementById("sendFileButton").value = file.name;
 
-        $c.find('.messages').append('<div><span class="file">You sent a file.</span></div>');
-      }
+
+    
+    // var file = e.originalEvent.dataTransfer.files[0];
+    $("#sendFileButton").click(function(){
+      eachActiveConnection(function(c, $c) {
+        if (c.label === "file"){
+          c.send({"name": file.name, "File":file});
+          $c.find('.messages').append('<div><span class="file">You sent a file.</span></div>');
+          document.getElementById("box").style.display = "none";
+          document.getElementById("sendFileButton").style.display = "none";
+        }
+        
+      }); 
     });
   });
   function doNothing(e){
@@ -197,9 +205,6 @@ window.onunload = window.onbeforeunload = function(e) {
 </head> 
  
 <body> 
-  <a href="https://github.com/peers/peerjs"><img style="position: absolute; top: 0; right: 0; border: 0;"
-    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
-    alt="Fork me on GitHub"></a>
 
   <div id="actions">
     Your PeerJS ID is <span id="pid"></span><br>
@@ -219,14 +224,8 @@ window.onunload = window.onbeforeunload = function(e) {
     Drag file here to send to active connections.
   </div>
   
-  
-  <div class="warning browser">
-    <div class="important">Your browser version: <span id="browsers"></span><br>
-  Currently <strong>Firefox 22+ and Google Chrome 26.0.1403.0 or above</strong> is required.</strong></div>For more up to date compatibility
-information see <a href="http://peerjs.com/status">PeerJS WebRTC
-  Status</a><br>Note that this demo may also fail if you are behind
-stringent firewalls or both you and the remote peer and behind symmetric
-NATs.
+  <input type="button" id="sendFileButton" value="Send"/>
+
 
 <div class="log" style="color:#FF7500;text-shadow:none;padding:15px;background:#eee"><strong>Connection status</strong>:<br></div>
 </div>
