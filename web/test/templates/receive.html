@@ -65,7 +65,8 @@ function connect(c) {
     c.on('data', function(data) {
       messages.append('<div><span class="peer">' + c.peer + '</span>: ' + data +
         '</div>');
-        });
+    });
+
     c.on('close', function() {
       alert(c.peer + ' has left the chat.');
       chatbox.remove();
@@ -79,6 +80,7 @@ function connect(c) {
   else if (c.label === 'file') {
     c.on('data', function(data) {
       // If we're getting a file, create a URL for it.
+
       if (data['File'].constructor === ArrayBuffer) {
         var dataView = new Uint8Array(data["File"]);
         var dataBlob = new Blob([dataView], {type: "application/octet-stream"});
