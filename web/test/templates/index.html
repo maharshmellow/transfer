@@ -86,6 +86,8 @@ function connect(c) {
   //   });
   // }
   connectedPeers[c.peer] = 1;
+
+  document.getElementById("page2").style.display = "none";
 }
 
 $(document).ready(function() {
@@ -96,15 +98,16 @@ $(document).ready(function() {
   box.on('drop', function(e){
     e.originalEvent.preventDefault();
     var file = e.originalEvent.dataTransfer.files[0];
-    document.getElementById("sendFileButton").value = file.name;
-
+    document.getElementById("page1").style.display = "none";
+    // document.getElementById("sendFileButton").value = file.name;
+    // document.getElementById("shareUrl").style.display = "block";
     // var file = e.originalEvent.dataTransfer.files[0];
     $("#sendFileButton").click(function(){
       eachActiveConnection(function(c, $c) {
         if (c.label === "file"){
           // you sent a file
           c.send({"name": file.name, "File":file});
-          document.getElementById("box").style.display = "none";
+          // document.getElementById("page1").style.display = "none";
           document.getElementById("sendFileButton").style.display = "none";
         }
       }); 
@@ -198,25 +201,60 @@ window.onunload = window.onbeforeunload = function(e) {
 </head> 
  
 <body> 
+  <div id="page1" class="page">
+    <div id="box">
+      <div id="logo">
+        <svg width="111px" height="11px" viewBox="0 0 111 11" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <!-- Generator: Sketch 45.2 (43514) - http://www.bohemiancoding.com/sketch -->
+            <desc>Created with Sketch.</desc>
+            <defs></defs>
+            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" font-weight="bold" font-size="12" font-family="BrandonGrotesque-Bold, Brandon Grotesque" letter-spacing="2.78999972">
+                <g id="Desktop-HD" transform="translate(-85.000000, -79.000000)" fill="#000000">
+                    <text id="TRANFER.FISH">
+                        <tspan x="85" y="89">TRANFER</tspan>
+                        <tspan x="157.581998" y="89" font-family="BrandonGrotesque-Regular, Brandon Grotesque" font-weight="normal">.FISH</tspan>
+                    </text>
+                </g>
+            </g>
+        </svg>
+      </div>
 
-  <div id="actions">
-    http://127.0.0.1:5000/<span id="pid"></span><br>
 
-    <!-- <form id="send">
-      <input type="text" id="text" placeholder="Enter message"><input class="button" type="submit" value="Send to selected peers">
-    </form> -->
-  </div>
-
-  <div id="wrap" style="display:none"><div id="connections"><span class="filler">You have not yet
-        made any connections.</span></div>
-    <div class="clear"></div></div>
-
-  <div id="box" style="background: grey; font-size: 18px; padding:40px 30px; text-align: center;">
-    Drag file here to send to active connections.
-  </div>
   
-  <input type="button" id="sendFileButton" value="Send"/>
 
+      <div id="wrap" style="display:none"><div id="connections"><span class="filler">You have not yet
+            made any connections.</span></div>
+        <div class="clear"></div></div>
+    Drag file here to send to active connections.
+    <!-- <input type="button" id="sendFileButton" value="Send"/> -->
+
+    
+  </div>
 </div>
+
+<div id="page2" class="page" style="background-color: red">
+  <div id="shareUrl">http://127.0.0.1:5000/<span id="pid"></span><br></div>
+</div>
+
+<div id="page2" class="page" style="background-color: white">
+  <input type="button" id="sendFileButton" value="Send"/>
+</div>
+<style>
+body, html{
+  margin: 0;
+  overflow: hidden;
+}
+.page{
+  height: 100vh;
+  overflow: hidden;
+}
+
+#box{
+  font-size: 18px;
+  height: 100vh;
+  text-align: center;
+
+}
+</style>
 </body> 
 </html> 
