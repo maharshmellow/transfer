@@ -8,7 +8,7 @@ def index():
 
 @app.route("/<senderID>")
 def redirect_code(senderID):
-    return render_template("index.html")
+    return render_template("receive.html", senderID=senderID)
 
 
 if __name__ == "__main__":
